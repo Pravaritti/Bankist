@@ -61,14 +61,14 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 //Functions
 
-const displayMovements = function (movements) {
+const displayMovements = function (acc) {
   //1. empty the movement container
   //(.textContent ->  returns only text content)
   //(.innerHTML -> returns all the html contents)
   // we create elements in JS using innerHTML
   containerMovements.innerHTML = '';
 
-  movements.forEach(function (mov, i) {
+  acc.movements.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
     const html = `
@@ -131,7 +131,7 @@ console.log(accounts);
 
 const updateUI = function (acc) {
   // Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
   // Display balance
   calcDisplayBalance(acc);
   // Display summary
@@ -187,9 +187,9 @@ btnTransfer.addEventListener('click', function (e) {
     amount > 0 &&
     receiverAcc &&
     currentAccount.balance >= amount &&
-    receiverAcc?.username !== currentAccount.user
+    receiverAcc?.username !== currentAccount.username
   ) {
-    //console.log('Transfer valid');
+    console.log('Transfer valid');
 
     //Doing the transfer
     currentAccount.movements.push(-amount);
@@ -198,6 +198,21 @@ btnTransfer.addEventListener('click', function (e) {
     // Update UI
     updateUI(currentAccount);
   }
+});
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    //Add movement
+    currentAccount.movements.push(amount);
+
+    //Update UI
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = '';
 });
 
 btnClose.addEventListener('click', function (e) {
